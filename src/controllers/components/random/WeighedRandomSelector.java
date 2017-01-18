@@ -1,4 +1,4 @@
-package controllers.components;
+package controllers.components.random;
 
 import com.sun.javaws.exceptions.InvalidArgumentException;
 import org.apache.commons.math3.exception.OutOfRangeException;

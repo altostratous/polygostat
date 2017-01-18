@@ -1,4 +1,4 @@
-package controllers.components;
+package controllers.components.random;
 
 import com.vividsolutions.jts.geom.*;
 
@@ -8,17 +8,17 @@ import java.util.HashMap;
 /**
  * Created by HP PC on 1/18/2017.
  */
-public class PolygonRandomPointGenerator implements RandomPointGenerator {
+public class ConvexPolygonRandomPointGenerator implements RandomPointGenerator {
     private Polygon polygon;
     private ArrayList<Polygon> triangles;
     private GeometryFactory geometryFactory;
     private WeighedRandomSelector triangleSelector;
     private HashMap<Polygon, TriangleRandomPointGenerator> triangleRandomPointGenerators;
 
-    public PolygonRandomPointGenerator(Polygon polygon) {
+    public ConvexPolygonRandomPointGenerator(Polygon polygon) {
+        geometryFactory = polygon.getFactory();
         this.polygon = polygon;
         triangles = explodeToTriangles(polygon);
-        geometryFactory = polygon.getFactory();
         HashMap<Polygon, Double> areas = new HashMap<>();
         triangleRandomPointGenerators = new HashMap<>();
         for (Polygon triangle :
@@ -34,7 +34,7 @@ public class PolygonRandomPointGenerator implements RandomPointGenerator {
         ArrayList<Polygon> triangles = new ArrayList<>();
         Coordinate base = coordinates[0];
         for (int i = 1; i + 1 < coordinates.length; i++) {
-            triangles.add(geometryFactory.createPolygon(geometryFactory.createLinearRing(new Coordinate[]{base, coordinates[i], coordinates[i + 1]}), null));
+            triangles.add(geometryFactory.createPolygon(geometryFactory.createLinearRing(new Coordinate[]{base, coordinates[i], coordinates[i + 1], base}), null));
         }
         return triangles;
     }

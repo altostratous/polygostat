@@ -1,4 +1,4 @@
-package controllers.components;
+package controllers.components.random;
 
 import com.vividsolutions.jts.geom.Coordinate;
 

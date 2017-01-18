@@ -6,7 +6,7 @@ import javafx.geometry.Rectangle2D;
 /**
  * Created by HP PC on 1/18/2017.
  */
-public interface RandomConvexPolygonGenerator {
+public interface RandomPolygonGenerator {
     Polygon nextPolygon();
     Rectangle2D getBounds();
 }

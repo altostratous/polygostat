@@ -1,19 +1,36 @@
 package controllers;
 
-import controllers.components.random.RandomConvexPolygonGenerator;
 import controllers.components.random.UnitSquareRandomConvexPolygonGenerator;
 import controllers.components.stat.TwoPolygonsSheet;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Controller {
     @FXML
     private Pane mainPain;
+    Timer timer;
     public Controller(){
+        timer = new Timer(1, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Platform.runLater(new Runnable() {
+                                      @Override
+                                      public void run() {
+                                          handleMainPaneClicked();
+                                      }
+                                  });
+            }
+        });
+        timer.start();
     }
     @FXML
     public void handleMainPaneClicked(){
-        TwoPolygonsSheet sheet = new TwoPolygonsSheet(new UnitSquareRandomConvexPolygonGenerator(50));
+        TwoPolygonsSheet sheet = new TwoPolygonsSheet(new UnitSquareRandomConvexPolygonGenerator(10));
         sheet.next();
         sheet.drawToPanel(mainPain);
     }

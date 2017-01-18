@@ -4,7 +4,10 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateList;
 import com.vividsolutions.jts.geom.Polygon;
 import controllers.components.geomentry.Common;
+import org.apache.commons.math3.exception.OutOfRangeException;
+import sun.plugin.dom.exception.InvalidStateException;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -19,25 +22,44 @@ public abstract class RandomNHullGenerator extends RandomPolygonGenerator {
 
     @Override
     public Polygon nextPolygon() {
+        Coordinate[][] coordinates = new Coordinate[n * n * n][];
         Polygon convexHull = null;
-        ArrayList<Coordinate> coordinateArrayList = new ArrayList<>();
-        coordinateArrayList.add(pointGenerator.nextCoordinate());
-        coordinateArrayList.add(pointGenerator.nextCoordinate());
-        coordinateArrayList.add(coordinateArrayList.get(0));
-        Coordinate[] coordinates;
-        while (convexHull == null || convexHull.getCoordinates().length < n + 1) {
-            coordinateArrayList.add(coordinateArrayList.get(coordinateArrayList.size() - 1));
-            Coordinate newPoint = pointGenerator.nextCoordinate();
-            if (convexHull != null)
-                while (convexHull.contains(factory.createPoint( newPoint))){
-                    newPoint = pointGenerator.nextCoordinate();
+        do {
+            for (int i = 0; i < coordinates.length; i++) {
+                coordinates[i] = new Coordinate[i + 2];
+                for (int j = 0; j < i; j++) {
+                    coordinates[i][j] = coordinates[i - 1][j];
                 }
-            coordinateArrayList.set(coordinateArrayList.size() - 2, newPoint);
-            coordinates = new Coordinate[coordinateArrayList.size()];
-            coordinates = coordinateArrayList.toArray(coordinates);
-            Polygon polygon = factory.createPolygon(factory.createLinearRing(coordinates), null);
-            convexHull = Common.convexHull(polygon);
+                coordinates[i][i] = pointGenerator.nextCoordinate();
+                coordinates[i][i + 1] = coordinates[i][0];
+            }
+            convexHull = convexHullFromCoords(coordinates[n * n * n - 1]);
+        } while (convexHull.getCoordinates().length < n + 1);
+        return findNgonConvexHull(coordinates);
+    }
+
+    private Polygon findNgonConvexHull(Coordinate[][] coordinates) {
+        return innerFindNgonConvexHull(coordinates, 0, coordinates.length);
+    }
+
+    private Polygon innerFindNgonConvexHull(Coordinate[][] coordinates, int start, int end) {
+        if (start == end)
+            throw new InvalidStateException("This state is invalid.");
+        int index = (start + end) / 2;
+        Polygon convexHull = convexHullFromCoords(coordinates[index]);
+        int count = convexHull.getCoordinates().length - 1;
+        if (count == n){
+            return convexHull;
+        } else {
+            if (count > n){
+                return innerFindNgonConvexHull(coordinates, start, index);
+            } else {
+                return innerFindNgonConvexHull(coordinates, index + 1, end);
+            }
         }
-        return convexHull;
+    }
+
+    private Polygon convexHullFromCoords(Coordinate[] coordinates){
+        return Common.convexHull(factory.createPolygon(factory.createLinearRing(coordinates), null));
     }
 }

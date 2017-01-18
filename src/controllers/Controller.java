@@ -31,7 +31,7 @@ public class Controller {
     }
     @FXML
     public void handleMainPaneClicked(){
-        TwoPolygonsSheet sheet = new TwoPolygonsSheet(new UnitSquareRandomNHullGenerator(3));
+        TwoPolygonsSheet sheet = new TwoPolygonsSheet(new UnitSquareRandomNHullGenerator(20));
         sheet.next();
         sheet.drawToPanel(mainPain);
     }

@@ -1,6 +1,7 @@
 package controllers;
 
-import controllers.components.random.UnitSquareRandomConvexPolygonGenerator;
+import controllers.components.random.UnitSquareRandomNHullGenerator;
+import controllers.components.random.UnitSquareRandomPolygonGenerator;
 import controllers.components.stat.TwoPolygonsSheet;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -30,7 +31,7 @@ public class Controller {
     }
     @FXML
     public void handleMainPaneClicked(){
-        TwoPolygonsSheet sheet = new TwoPolygonsSheet(new UnitSquareRandomConvexPolygonGenerator(10));
+        TwoPolygonsSheet sheet = new TwoPolygonsSheet(new UnitSquareRandomNHullGenerator(3));
         sheet.next();
         sheet.drawToPanel(mainPain);
     }

@@ -29,26 +29,8 @@ public class TwoPolygonsSheet {
     }
     public void drawToPanel(Pane pane){
         pane.getChildren().clear();
-        drawPolygonToPanel(firstPolygon, pane, Color.DEEPSKYBLUE, Color.TRANSPARENT);
-        drawPolygonToPanel(secondPolygon, pane, Color.INDIANRED, Color.TRANSPARENT);
-        drawPolygonToPanel(intersection, pane, Color.DARKGREEN, Color.color(0.2, 0.8, 0.2, 0.3));
-    }
-    private void drawPolygonToPanel(Polygon geometricPolygon, Pane pane, Paint strokeColor, Paint fillColor){
-        javafx.scene.shape.Polygon polygon = new javafx.scene.shape.Polygon();
-        for (Coordinate coordinate :
-                geometricPolygon.getCoordinates()) {
-            pane.getChildren().add(new Circle(coordinate.x * pane.getWidth(), coordinate.y * pane.getHeight(), 2, strokeColor));
-        }
-        Polygon convex = Common.convexHull(geometricPolygon);
-        for (Coordinate coordinate :
-                convex.getCoordinates()) {
-            polygon.getPoints().addAll(coordinate.x * pane.getWidth(), coordinate.y * pane.getHeight());
-        }
-        polygon.setStroke(strokeColor);
-        polygon.setFill(fillColor);
-        polygon.setLayoutX(0);
-        polygon.setLayoutY(0);
-        polygon.setStrokeWidth(1.5);
-        pane.getChildren().add(polygon);
+        Common.drawPolygonToPanel(firstPolygon, pane, Color.DEEPSKYBLUE, Color.TRANSPARENT);
+        Common.drawPolygonToPanel(secondPolygon, pane, Color.INDIANRED, Color.TRANSPARENT);
+        Common.drawPolygonToPanel(intersection, pane, Color.DARKGREEN, Color.color(0.2, 0.8, 0.2, 0.3));
     }
 }

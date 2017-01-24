@@ -9,7 +9,7 @@ import javafx.geometry.Rectangle2D;
  * Created by HP PC on 1/18/2017.
  */
 public abstract class RandomPolygonGenerator {
-    protected ConvexPolygonRandomPointGenerator pointGenerator;
+    protected PolygonRandomPointGenerator pointGenerator;
     private int n;
     protected GeometryFactory factory;
 

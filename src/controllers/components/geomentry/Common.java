@@ -12,6 +12,8 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.Random;
+
 /**
  * Created by HP PC on 1/18/2017.
  */
@@ -133,5 +135,9 @@ public class Common {
         debugPain.getChildren().add(circle);
         debugPain.getChildren().add(label);
         pointCounter++;
+    }
+
+    public static double randomBiLinear(Random random, double radius) {
+        return radius * Math.sqrt(random.nextDouble());
     }
 }

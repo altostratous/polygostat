@@ -36,9 +36,11 @@ public class PolygonRandomPointGenerator implements RandomPointGenerator {
     }
 
     private ArrayList<Polygon> explodeToTriangles(Polygon polygon) {
+        Common.drawPolygonToPanel(polygon, Common.debugPain, Color.VIOLET, Color.TRANSPARENT);
         Coordinate[] allCoordinates = polygon.getCoordinates();
         ArrayList<Polygon> result = new ArrayList<>();
         if (Common.convexHull(polygon).getCoordinates().length == allCoordinates.length){
+            Common.drawPolygonToPanel(polygon, Common.debugPain, Color.RED, Color.TRANSPARENT);
             result.addAll(explodeConvexToTriangles(polygon));
             return result;
         }
@@ -46,32 +48,34 @@ public class PolygonRandomPointGenerator implements RandomPointGenerator {
         for (int i = 0; i < coordinates.length; i++) {
             coordinates[i] = allCoordinates[i];
         }
-        int last;
+        int last = 0;
         int next = 0;
         int current;
         for (current = 0; current < coordinates.length; current++){
             last = Common.fixInSize((current - 1), coordinates.length);
             next = Common.fixInSize((current + 1), coordinates.length);
-            if (0 < Angle.angleBetweenOriented(coordinates[last], coordinates[current], coordinates[next])){
+            if (0 > Angle.angleBetweenOriented(coordinates[last], coordinates[current], coordinates[next])){
                 break;
             }
 
         }
-        int angleStart = next;
-        next++;
-        next = Common.fixInSize(next, coordinates.length);
-        int angularNearestNeighbourIndex = next;
-        double minAngle = Angle.angleBetweenOriented(coordinates[angleStart], coordinates[current], coordinates[next]);
+//        Common.debugPoint(coordinates[last], Color.GREEN);
+//        Common.debugPoint(coordinates[current], Color.DEEPPINK);
+//        Common.debugPoint(coordinates[next], Color.GREEN);
+        int angleStart = last;
+        int angularNearestNeighbourIndex = -1;
+        double minAngle = 8;
         for (int i = 0; i < coordinates.length - 3; i++){
             next++;
             next = Common.fixInSize(next, coordinates.length);
             double angleBetweenOriented = Angle.angleBetweenOriented(coordinates[angleStart], coordinates[current], coordinates[next]);
-            if (angleBetweenOriented < minAngle && angleBetweenOriented >= 0)
+            if (angleBetweenOriented < minAngle && angleBetweenOriented > 0)
             {
                 minAngle = angleBetweenOriented;
                 angularNearestNeighbourIndex = next;
             }
         }
+//        Common.debugPoint(coordinates[angularNearestNeighbourIndex], Color.RED);
         Coordinate[] firstPolyCoords = new Coordinate[Common.fixInSize((angularNearestNeighbourIndex - current), coordinates.length) + 2];
         Coordinate[] secondPolyCoords = new Coordinate[Common.fixInSize((current - angularNearestNeighbourIndex), coordinates.length) + 2];
         for (int i = 0; i < firstPolyCoords.length - 1; i++){
@@ -82,8 +86,13 @@ public class PolygonRandomPointGenerator implements RandomPointGenerator {
         }
         firstPolyCoords[firstPolyCoords.length - 1] = firstPolyCoords[0];
         secondPolyCoords[secondPolyCoords.length - 1] = secondPolyCoords[0];
-        result.addAll(explodeToTriangles(geometryFactory.createPolygon(geometryFactory.createLinearRing(firstPolyCoords), null)));
-        result.addAll(explodeToTriangles(geometryFactory.createPolygon(geometryFactory.createLinearRing(secondPolyCoords), null)));
+
+        Polygon firstPolygon = geometryFactory.createPolygon(geometryFactory.createLinearRing(firstPolyCoords), null);
+        Polygon secondPolygon = geometryFactory.createPolygon(geometryFactory.createLinearRing(secondPolyCoords), null);
+        //Common.drawPolygonToPanel(firstPolygon, Common.debugPain, Color.RED, Color.BLACK);
+        //Common.drawPolygonToPanel(secondPolygon, Common.debugPain, Color.RED, Color.BLACK);
+        result.addAll(explodeToTriangles(firstPolygon));
+        result.addAll(explodeToTriangles(secondPolygon));
         return result;
     }
 
@@ -103,6 +112,7 @@ public class PolygonRandomPointGenerator implements RandomPointGenerator {
     }
 
     public void drawToPanel(Pane mainPain) {
+        Common.drawPolygonToPanel(polygon, mainPain, Color.GREEN, Color.DEEPSKYBLUE);
         for (Polygon triangle :
                 triangles) {
             Common.drawPolygonToPanel(triangle, mainPain, Color.RED, Color.TRANSPARENT);

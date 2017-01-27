@@ -1,25 +1,23 @@
 package controllers.components.random;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Polygon;
 import javafx.geometry.Rectangle2D;
 
 /**
  * Created by HP PC on 1/18/2017.
  */
-public class UnitSquareRandomNHullGenerator extends RandomNHullGenerator {
+public class UnitSquareRandomNHullGenerator extends RandomNGonGenerator {
     public UnitSquareRandomNHullGenerator(int n) {
-        super(n, new GeometryFactory().createPolygon(new GeometryFactory().createLinearRing(
+        super(n);
+        this.pointGenerator = new ConvexPolygonRandomPointGenerator(factory.createPolygon(factory.createLinearRing(
                 new Coordinate[] {
-                        new Coordinate(.25, .25),
-                        new Coordinate(.25, .75),
-                        new Coordinate(.75, .75),
-                        new Coordinate(.75, .25),
-                        new Coordinate(.25, .25)
+                        new Coordinate(0, 0),
+                        new Coordinate(0, 1),
+                        new Coordinate(1, 1),
+                        new Coordinate(1, 0),
+                        new Coordinate(0, 0)
                 }
         ), null));
-        this.pointGenerator = new PolygonRandomPointGenerator(this.space);
     }
 
     @Override

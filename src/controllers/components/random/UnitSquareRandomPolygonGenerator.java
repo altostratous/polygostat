@@ -9,7 +9,7 @@ import javafx.geometry.Rectangle2D;
 public class UnitSquareRandomPolygonGenerator extends RandomPolygonGenerator {
     public UnitSquareRandomPolygonGenerator(int n) {
         super(n);
-        this.pointGenerator = new PolygonRandomPointGenerator(factory.createPolygon(factory.createLinearRing(
+        this.pointGenerator = new ConvexPolygonRandomPointGenerator(factory.createPolygon(factory.createLinearRing(
                 new Coordinate[] {
                         new Coordinate(0, 0),
                         new Coordinate(0, 1),

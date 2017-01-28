@@ -1,14 +1,11 @@
 package controllers.components.stat;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
 import controllers.components.geomentry.Common;
 import controllers.components.random.RandomPolygonGenerator;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
 
 /**
  * Created by HP PC on 1/18/2017.

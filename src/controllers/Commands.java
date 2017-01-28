@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
  * Created by HP PC on 1/28/2017.
  */
 public class Commands {
-    @CommandAnnotation(help = "Shows available commands and their help.")
+    @CommandAnnotation(help = "\t\t\tShows available commands and their help.")
     public static void help(PolygoStat controller, String[] args) throws ClassNotFoundException {
         ClassLoader classLoader = Commands.class.getClassLoader();
         Class<Commands> commands = (Class<Commands>) classLoader.loadClass("controllers.Commands");
@@ -26,20 +26,20 @@ public class Commands {
 
     @CommandAnnotation(help = "params square/circle/triangle, n")
     public static void phase_1_task_1(PolygoStat controller, String[] args){
-        RandomPolygonGenerator randomPolygonGenerator = null;
+        RandomNHullGenerator randomNHullGenerator = null;
         int n = Integer.parseInt(args[2]);
         switch (args[1]){
             case "square":
-                randomPolygonGenerator = new UnitSquareRandomNHullGenerator(n);
+                randomNHullGenerator = new UnitSquareRandomNHullGenerator(n);
                 break;
             case "circle":
-                randomPolygonGenerator = new UnitCircleRandomNHullGenerator(n);
+                randomNHullGenerator = new UnitCircleRandomNHullGenerator(n);
                 break;
             case "triangle":
-                randomPolygonGenerator = new UnitTriangleRandomNHullGenerator(n);
+                randomNHullGenerator = new UnitTriangleRandomNHullGenerator(n);
                 break;
         }
-        TwoPolygonsSheet sheet = new TwoPolygonsSheet(randomPolygonGenerator);
+        TwoPolygonsSheet sheet = new TwoPolygonsSheet(randomNHullGenerator);
         sheet.next();
         sheet.drawToPanel(controller.getMainPane());
     }

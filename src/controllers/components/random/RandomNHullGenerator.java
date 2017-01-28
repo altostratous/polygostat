@@ -3,12 +3,13 @@ package controllers.components.random;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
+import controllers.components.geomentry.Common;
 import javafx.geometry.Rectangle2D;
 
 /**
  * Created by HP PC on 1/18/2017.
  */
-public abstract class RandomPolygonGenerator {
+public abstract class RandomNHullGenerator {
     protected RandomPointGenerator pointGenerator;
     private int n;
     protected GeometryFactory factory;
@@ -17,7 +18,7 @@ public abstract class RandomPolygonGenerator {
         this.n = n;
     }
 
-    protected RandomPolygonGenerator(int n){
+    protected RandomNHullGenerator(int n){
         factory = new GeometryFactory();
         this.n = n;
     }
@@ -29,7 +30,7 @@ public abstract class RandomPolygonGenerator {
         }
         coordinates[n] = coordinates[0];
         Polygon polygon = factory.createPolygon(factory.createLinearRing(coordinates), null);
-        return polygon;
+        return Common.convexHull(polygon);
     }
 
     public abstract Rectangle2D getBounds();

@@ -6,8 +6,8 @@ import javafx.geometry.Rectangle2D;
 /**
  * Created by HP PC on 1/18/2017.
  */
-public class UnitSquareRandomPolygonGenerator extends RandomPolygonGenerator {
-    public UnitSquareRandomPolygonGenerator(int n) {
+public class UnitSquaerRandomNGonGenerator extends RandomNGonGenerator {
+    public UnitSquaerRandomNGonGenerator(int n) {
         super(n);
         this.pointGenerator = new ConvexPolygonRandomPointGenerator(factory.createPolygon(factory.createLinearRing(
                 new Coordinate[] {

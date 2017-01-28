@@ -1,7 +1,6 @@
 package controllers.components.random;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateList;
 import com.vividsolutions.jts.geom.Polygon;
 import controllers.components.geomentry.Common;
 
@@ -10,7 +9,7 @@ import java.util.ArrayList;
 /**
  * Created by HP PC on 1/18/2017.
  */
-public abstract class RandomNGonGenerator extends RandomPolygonGenerator {
+public abstract class RandomNGonGenerator extends RandomNHullGenerator {
     private int n;
     public RandomNGonGenerator(int n) {
         super(n);

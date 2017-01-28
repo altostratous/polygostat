@@ -6,7 +6,7 @@ import javafx.geometry.Rectangle2D;
 /**
  * Created by HP PC on 1/18/2017.
  */
-public class UnitTriangleRandomNHullGenerator extends RandomNGonGenerator {
+public class UnitTriangleRandomNHullGenerator extends RandomNHullGenerator {
     public UnitTriangleRandomNHullGenerator(int n) {
         super(n);
         this.pointGenerator = new ConvexPolygonRandomPointGenerator(factory.createPolygon(factory.createLinearRing(

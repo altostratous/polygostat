@@ -128,12 +128,12 @@ public class Common {
 
     private static int pointCounter = 0;
     public static void debugPoint(Coordinate point, Paint color){
-        Circle circle = new Circle(point.x * debugPain.getWidth(), point.y * debugPain.getHeight(), 5, color);
-        Label label = new Label(new Integer(pointCounter).toString());
-        label.setLayoutY(circle.getCenterY());
-        label.setLayoutX(circle.getCenterX());
+        Circle circle = new Circle(point.x * debugPain.getWidth(), point.y * debugPain.getHeight(), .5, color);
+//        Label label = new Label(new Integer(pointCounter).toString());
+//        label.setLayoutY(circle.getCenterY());
+//        label.setLayoutX(circle.getCenterX());
         debugPain.getChildren().add(circle);
-        debugPain.getChildren().add(label);
+//        debugPain.getChildren().add(label);
         pointCounter++;
     }
 

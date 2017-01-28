@@ -29,13 +29,13 @@ public class Common {
         javafx.scene.shape.Polygon polygon = new javafx.scene.shape.Polygon();
         for (Coordinate coordinate :
                 geometricPolygon.getCoordinates()) {
-            pane.getChildren().add(new Circle(coordinate.x * pane.getWidth(), coordinate.y * pane.getHeight(), 2, strokeColor));
+            pane.getChildren().add(new Circle((coordinate.x / 2 + 0.5) * pane.getWidth(), (coordinate.y / 2 + 0.5) * pane.getHeight(), 2, strokeColor));
         }
         // Polygon convex = Common.convexHull(geometricPolygon);
         for (Coordinate coordinate :
                 // convex.getCoordinates()) {
                 geometricPolygon.getCoordinates()) {
-            polygon.getPoints().addAll(coordinate.x * pane.getWidth(), coordinate.y * pane.getHeight());
+            polygon.getPoints().addAll((coordinate.x / 2 + 0.5) * pane.getWidth(), (coordinate.y / 2 + 0.5) * pane.getHeight());
         }
         polygon.setStroke(strokeColor);
         polygon.setFill(fillColor);

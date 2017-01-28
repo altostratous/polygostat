@@ -1,10 +1,10 @@
 package controllers;
 
+import controllers.components.random.*;
+import controllers.components.stat.TwoPolygonsSheet;
 import views.CommandAnnotation;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 
 /**
  * Created by HP PC on 1/28/2017.
@@ -22,5 +22,25 @@ public class Commands {
             if (annotation != null)
                 controller.getPrintStream().println("\t" + method.getName() + ":\t\t\t\t\t\t" + annotation.help());
         }
+    }
+
+    @CommandAnnotation(help = "params square/circle/triangle, n")
+    public static void phase_1_task_1(PolygoStat controller, String[] args){
+        RandomPolygonGenerator randomPolygonGenerator = null;
+        int n = Integer.parseInt(args[2]);
+        switch (args[1]){
+            case "square":
+                randomPolygonGenerator = new UnitSquareRandomNHullGenerator(n);
+                break;
+            case "circle":
+                randomPolygonGenerator = new UnitCircleRandomNHullGenerator(n);
+                break;
+            case "triangle":
+                randomPolygonGenerator = new UnitTriangleRandomNHullGenerator(n);
+                break;
+        }
+        TwoPolygonsSheet sheet = new TwoPolygonsSheet(randomPolygonGenerator);
+        sheet.next();
+        sheet.drawToPanel(controller.getMainPane());
     }
 }

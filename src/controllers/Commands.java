@@ -9,9 +9,7 @@ import controllers.components.stat.MethodOfMomentsEstimator;
 import controllers.components.stat.TwoPolygonsSheet;
 import views.CommandAnnotation;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -183,6 +181,8 @@ public class Commands {
         Scanner scanner = new Scanner(fileInputStream);
         HashMap<Number,Number> chartData = new HashMap<>();
         HashMap<Number,Number> chartDataTrend = new HashMap<>();
+        scanner.nextDouble();
+        scanner.nextDouble();
         while (scanner.hasNext()){
             chartData.put(scanner.nextDouble(), scanner.nextDouble());
         }
@@ -201,7 +201,7 @@ public class Commands {
 
             counter++;
         }
-        jamlab.Polyfit regression = new jamlab.Polyfit(x, y, 3);
+        jamlab.Polyfit regression = new jamlab.Polyfit(x, y, 4);
 //        controller.getPrintStream().println(regression.getPolynomialCoefficients());
         for (double i = minKey; i < maxKey; i+= 0.04) {
             chartDataTrend.put(i, regression.predict(i));
@@ -211,6 +211,21 @@ public class Commands {
         scanner.close();
     }
 
+    @CommandAnnotation(help = "Generate data.")
+    public static void phase_2_task_2(PolygoStat controller, String[] arg) throws Exception {
+        File exponentialFile = new File("phase_2_task_1_1/Exponential.txt");
+        File uniformFile = new File("phase_2_task_1_1/Uniform.txt");
+        FileOutputStream exponentialFileInputStream = new FileOutputStream(exponentialFile);
+        FileOutputStream uniformFileInputStream = new FileOutputStream(uniformFile);
+        PrintStream exponentialPrintStream = new PrintStream(exponentialFileInputStream);
+        PrintStream uniformPrintStream = new PrintStream(uniformFileInputStream);
+        for (double i = 0; i < 1; i+= 0.05) {
+            uniformPrintStream.println(i + " " + 1.0);
+            exponentialPrintStream.println(i + " " + Math.exp(-i));
+        }
+        exponentialPrintStream.close();
+        uniformPrintStream.close();
+    }
     @CommandAnnotation(help = "Fits Observations.txt with a degree M polynomial Method of moments")
     public static void phase_2_task_1_2(PolygoStat controller, String[] arg) throws Exception {
         File file = new File("phase_2_task_1_1/Observation.txt");
@@ -218,6 +233,8 @@ public class Commands {
         Scanner scanner = new Scanner(fileInputStream);
         HashMap<Number,Number> chartData = new HashMap<>();
         HashMap<Number,Number> chartDataTrend = new HashMap<>();
+        double minX = scanner.nextDouble();
+        double maxX = scanner.nextDouble();
         while (scanner.hasNext()){
             chartData.put(scanner.nextDouble(), scanner.nextDouble());
         }
@@ -236,7 +253,7 @@ public class Commands {
 
             counter++;
         }
-        MethodOfMomentsEstimator regression = new MethodOfMomentsEstimator(x, y, 2);
+        MethodOfMomentsEstimator regression = new MethodOfMomentsEstimator(x, y, 3, minX, maxX);
 //        controller.getPrintStream().println(regression.getPolynomialCoefficients());
         for (double i = minKey; i < maxKey; i+= 0.04) {
             chartDataTrend.put(i, regression.predict(i));

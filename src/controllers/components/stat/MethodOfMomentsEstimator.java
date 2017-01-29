@@ -10,14 +10,33 @@ public class MethodOfMomentsEstimator {
     private double[] polynomialCoefficients;
     private double[] x;
     private double[] y;
+    private double minX, maxX;
 
-    public MethodOfMomentsEstimator(double x[], double y[], int degree) {
+    public MethodOfMomentsEstimator(double x[], double y[], int degree, double minX, double maxX) {
         this.degree = degree;
         this.x = x;
         this.y = y;
+        sortXAndY(x,y);
+        this.minX = minX;
+        this.maxX = maxX;
         Matrix A = momentMatrix(degree);
         Matrix C = sampleMomentMatrix();
-        polynomialCoefficients = A.inverse().times(C.transpose()).transpose().getArray()[0];
+        polynomialCoefficients = A.inverse().times(C).transpose().getArray()[0];
+    }
+
+    private void sortXAndY(double[] x, double[] y) {
+        for (int i = 0; i < x.length; i++) {
+            for (int j = 0; j < x.length - 1; j++) {
+                if (x[j] > x[j + 1]){
+                    double temp = x[j];
+                    x[j] = x[j + 1];
+                    x[j+ 1] = temp;
+                    temp = y[j];
+                    y[j] = y[j + 1];
+                    y[j+ 1] = temp;
+                }
+            }
+        }
     }
 
     private Matrix sampleMomentMatrix() {
@@ -25,7 +44,7 @@ public class MethodOfMomentsEstimator {
         for (int i = 1; i < degree + 2; i++) {
             coeffs[i - 1] = getSampleNthMoment(i);
         }
-        return new Matrix(coeffs,1);
+        return new Matrix(coeffs,1).transpose();
     }
 
     private Matrix momentMatrix(int degree) {
@@ -34,7 +53,8 @@ public class MethodOfMomentsEstimator {
         double maxX = getMaxX();
         for (int i = 1; i < degree + 2; i++) {
             for (int j = 0; j < degree + 1; j++) {
-                double integralExponent = (degree + i - j) + 1;
+                double exponent = (degree - j) + i;
+                double integralExponent = exponent + 1;
                 coeffs[i - 1][j] = (Math.pow(maxX, integralExponent) - Math.pow(minX, integralExponent)) / integralExponent;
             }
         }
@@ -43,35 +63,30 @@ public class MethodOfMomentsEstimator {
 
     double getSampleNthMoment(int n){
         double result = 0;
-        for (int i = 0; i < n; i++) {
-            result += Math.pow(y[i], n);
+        for (int i = 0; i < y.length; i++) {
+            double dx;
+            if (i == 0)
+                dx = x[i + 1] - x[i];
+            else
+                dx = x[i] - x[i - 1];
+            result += Math.pow(x[i], n) * y[i] * (dx);
         }
-        return result / y.length;
+        return result;
     }
 
     public double getMinX() {
-        double res = x[0];
-        for (int i = 0; i < x.length; i++) {
-            if (x[i] < res)
-                res = x[i];
-        }
-        return res;
+        return minX;
     }
 
     public double getMaxX() {
-        double res = x[0];
-        for (int i = 0; i < x.length; i++) {
-            if (x[i] > res)
-                res = x[i];
-        }
-        return res;
+        return  maxX;
     }
 
     public Number predict(double i) {
         double result = polynomialCoefficients[0];
         for (int j = 1; j < polynomialCoefficients.length; j++) {
-            result += polynomialCoefficients[j];
             result *= i;
+            result += polynomialCoefficients[j];
         }
         return result;
     }

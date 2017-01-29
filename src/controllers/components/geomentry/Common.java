@@ -5,6 +5,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -26,23 +27,28 @@ public class Common {
         return factory.createPolygon(factory.createLinearRing(polygon.convexHull().getCoordinates()), null);
     }
     public static void drawPolygonToPanel(Polygon geometricPolygon, Pane pane, Paint strokeColor, Paint fillColor){
-        javafx.scene.shape.Polygon polygon = new javafx.scene.shape.Polygon();
-        for (Coordinate coordinate :
-                geometricPolygon.getCoordinates()) {
-            pane.getChildren().add(new Circle((coordinate.x / 2 + 0.5) * pane.getWidth(), (coordinate.y / 2 + 0.5) * pane.getHeight(), 2, strokeColor));
-        }
-        // Polygon convex = Common.convexHull(geometricPolygon);
-        for (Coordinate coordinate :
-                // convex.getCoordinates()) {
-                geometricPolygon.getCoordinates()) {
-            polygon.getPoints().addAll((coordinate.x / 2 + 0.5) * pane.getWidth(), (coordinate.y / 2 + 0.5) * pane.getHeight());
-        }
-        polygon.setStroke(strokeColor);
-        polygon.setFill(fillColor);
-        polygon.setLayoutX(0);
-        polygon.setLayoutY(0);
-        polygon.setStrokeWidth(1.5);
-        pane.getChildren().add(polygon);
+        Platform.runLater(new Runnable() {
+                              @Override
+                              public void run() {
+                                  javafx.scene.shape.Polygon polygon = new javafx.scene.shape.Polygon();
+                                  for (Coordinate coordinate :
+                                          geometricPolygon.getCoordinates()) {
+                                      pane.getChildren().add(new Circle((coordinate.x / 2 + 0.5) * pane.getWidth(), (coordinate.y / 2 + 0.5) * pane.getHeight(), 2, strokeColor));
+                                  }
+                                  // Polygon convex = Common.convexHull(geometricPolygon);
+                                  for (Coordinate coordinate :
+                                      // convex.getCoordinates()) {
+                                          geometricPolygon.getCoordinates()) {
+                                      polygon.getPoints().addAll((coordinate.x / 2 + 0.5) * pane.getWidth(), (coordinate.y / 2 + 0.5) * pane.getHeight());
+                                  }
+                                  polygon.setStroke(strokeColor);
+                                  polygon.setFill(fillColor);
+                                  polygon.setLayoutX(0);
+                                  polygon.setLayoutY(0);
+                                  polygon.setStrokeWidth(1.5);
+                                  pane.getChildren().add(polygon);
+                              }
+                          });
     }
 
     public static Polygon addPointToConvexHull(Polygon polygon, Coordinate coordinate){

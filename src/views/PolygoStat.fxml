@@ -13,15 +13,8 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.PolygoStat">
    <children>
       <Pane fx:id="mainPane" layoutX="14.0" layoutY="14.0" prefHeight="400.0" prefWidth="400.0" style="-fx-background-color: #E5E0FF;" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0" />
-      <LineChart fx:id="lineChart" layoutX="428.0" layoutY="15.0" prefHeight="400.0" prefWidth="357.0" style="-fx-background-color: #F0FFF0;" AnchorPane.leftAnchor="428.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
-        <xAxis>
-          <CategoryAxis side="BOTTOM" />
-        </xAxis>
-        <yAxis>
-          <NumberAxis side="LEFT" />
-        </yAxis>
-      </LineChart>
       <TextArea fx:id="logTextArea" editable="false" layoutX="14.0" layoutY="428.0" prefHeight="120.0" prefWidth="770.0" AnchorPane.bottomAnchor="52.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="428.0" />
       <TextField fx:id="commandTextField" layoutX="15.0" layoutY="561.0" onKeyPressed="#handleCommandTextFieldKeyPressed" prefHeight="25.0" prefWidth="772.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
+      <AnchorPane fx:id="lineChartContainer" layoutX="427.0" layoutY="14.0" prefHeight="400.0" prefWidth="357.0" AnchorPane.bottomAnchor="185.0" AnchorPane.leftAnchor="430.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0" />
    </children>
 </AnchorPane>

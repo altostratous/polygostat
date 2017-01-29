@@ -31,6 +31,7 @@ public class Common {
                               @Override
                               public void run() {
                                   javafx.scene.shape.Polygon polygon = new javafx.scene.shape.Polygon();
+                                  pane.getChildren().clear();
                                   for (Coordinate coordinate :
                                           geometricPolygon.getCoordinates()) {
                                       pane.getChildren().add(new Circle((coordinate.x / 2 + 0.5) * pane.getWidth(), (coordinate.y / 2 + 0.5) * pane.getHeight(), 2, strokeColor));

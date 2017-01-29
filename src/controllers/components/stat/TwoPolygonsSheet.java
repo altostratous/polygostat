@@ -30,4 +30,8 @@ public class TwoPolygonsSheet {
         Common.drawPolygonToPanel(secondPolygon, pane, Color.INDIANRED, Color.TRANSPARENT);
         Common.drawPolygonToPanel(intersection, pane, Color.DARKGREEN, Color.color(0.2, 0.8, 0.2, 0.3));
     }
+
+    public double getOverLappingArea() {
+        return intersection.getArea();
+    }
 }

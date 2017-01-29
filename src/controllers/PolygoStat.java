@@ -11,6 +11,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import views.FXImaging;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -123,19 +124,44 @@ public class PolygoStat {
 
     public void drawChart(HashMap<Number, Number> chartData) {
         final NumberAxis xAxis = new NumberAxis();
+        xAxis.setLabel("");
         final NumberAxis yAxis = new NumberAxis();
+        yAxis.setLabel("");
         LineChart<Number,Number> lineChart = new LineChart<Number, Number>(xAxis, yAxis);
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         for (Number key :
                 chartData.keySet()) {
             series.getData().add(new XYChart.Data<Number, Number>(key, chartData.get(key)));
         }
+        series.setName("Chart");
         lineChart.getData().add(series);
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 lineChartContainer.getChildren().clear();
                 lineChartContainer.getChildren().add(lineChart);
+                AnchorPane.setTopAnchor(lineChart,0.);
+                AnchorPane.setBottomAnchor(lineChart,0.);
+                AnchorPane.setLeftAnchor(lineChart,0.);
+                AnchorPane.setRightAnchor(lineChart,0.);
+            }
+        });
+    }
+
+    public void saveChart(String s) {
+        Platform.runLater(new Runnable() {
+                              @Override
+                              public void run() {
+                                  FXImaging.saveImage(lineChartContainer, s);
+                              }
+                          });
+    }
+
+    public void savePane(String s) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                FXImaging.saveImage(mainPane, s);
             }
         });
     }

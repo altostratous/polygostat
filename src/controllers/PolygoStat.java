@@ -96,7 +96,7 @@ public class PolygoStat {
                             } catch (IllegalAccessException e) {
 
                             } catch (InvocationTargetException e) {
-
+                                e.printStackTrace();
                             }
                         }
                     });

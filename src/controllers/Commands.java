@@ -5,6 +5,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
 import controllers.components.geomentry.Common;
 import controllers.components.random.*;
+import controllers.components.stat.MethodOfMomentsEstimator;
 import controllers.components.stat.TwoPolygonsSheet;
 import views.CommandAnnotation;
 
@@ -175,7 +176,7 @@ public class Commands {
 //        controller.saveChart("phase_1_task_3/chart_"+args[1]+"_"+args[2]+".png");
     }
 
-    @CommandAnnotation(help = "Fits Observations.txt with a degree M polynomial")
+    @CommandAnnotation(help = "Fits Observations.txt with a degree M polynomial MMSE")
     public static void phase_2_task_1_1(PolygoStat controller, String[] arg) throws Exception {
         File file = new File("phase_2_task_1_1/Observation.txt");
         FileInputStream fileInputStream = new FileInputStream(file);
@@ -201,6 +202,41 @@ public class Commands {
             counter++;
         }
         jamlab.Polyfit regression = new jamlab.Polyfit(x, y, 3);
+//        controller.getPrintStream().println(regression.getPolynomialCoefficients());
+        for (double i = minKey; i < maxKey; i+= 0.04) {
+            chartDataTrend.put(i, regression.predict(i));
+        }
+
+        controller.drawChart(chartDataTrend, chartData);
+        scanner.close();
+    }
+
+    @CommandAnnotation(help = "Fits Observations.txt with a degree M polynomial Method of moments")
+    public static void phase_2_task_1_2(PolygoStat controller, String[] arg) throws Exception {
+        File file = new File("phase_2_task_1_1/Observation.txt");
+        FileInputStream fileInputStream = new FileInputStream(file);
+        Scanner scanner = new Scanner(fileInputStream);
+        HashMap<Number,Number> chartData = new HashMap<>();
+        HashMap<Number,Number> chartDataTrend = new HashMap<>();
+        while (scanner.hasNext()){
+            chartData.put(scanner.nextDouble(), scanner.nextDouble());
+        }
+        double[] x = new double[chartData.size()], y = new double[chartData.size()];
+        int counter = 0;
+        double minKey = 4, maxKey = 0;
+        for (Number key :
+                chartData.keySet()) {
+            if ((double)key > maxKey)
+                maxKey = (double) key;
+            if ((double)key < minKey)
+                minKey = (double) key;
+
+            x[counter] = (double) key;
+            y[counter] = (double) chartData.get(key);
+
+            counter++;
+        }
+        MethodOfMomentsEstimator regression = new MethodOfMomentsEstimator(x, y, 2);
 //        controller.getPrintStream().println(regression.getPolynomialCoefficients());
         for (double i = minKey; i < maxKey; i+= 0.04) {
             chartDataTrend.put(i, regression.predict(i));

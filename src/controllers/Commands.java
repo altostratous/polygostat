@@ -1,18 +1,12 @@
 package controllers;
 
-import com.sun.corba.se.impl.naming.cosnaming.NamingUtils;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.index.quadtree.DoubleBits;
 import controllers.components.geomentry.Common;
 import controllers.components.random.*;
 import controllers.components.stat.TwoPolygonsSheet;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
-import javafx.scene.paint.Color;
 import views.CommandAnnotation;
-import views.FXImaging;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -77,18 +71,20 @@ public class Commands {
         }
         TwoPolygonsSheet sheet = new TwoPolygonsSheet(randomNHullGenerator);
         sheet.next();
-        double[] distro = new double[100];
-        for (int i = 0; i < 100; i += 1) {
+        int smoothness = 80;
+        double[] distro = new double[smoothness];
+        for (int i = 0; i < smoothness; i += 1) {
             distro[i] = 0;
         }
-        for (int i = 0; i< 10000; i++){
+        int sampleSize = 50000;
+        for (int i = 0; i< sampleSize; i++){
             sheet.next();
             double area = sheet.getOverLappingArea();
-            int key = (int)Math.floor(area / 4 * 100);
-            distro[key] += 0.0001;
+            int key = (int)Math.floor(area / 4 * smoothness);
+            distro[key] += 1.0/sampleSize;
         }
         HashMap<Number,Number> chatData = new HashMap<>();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < smoothness; i++) {
             chatData.put(i * 0.04, distro[i]);
         }
         controller.drawChart(chatData);
@@ -180,16 +176,37 @@ public class Commands {
     }
 
     @CommandAnnotation(help = "Fits Observations.txt with a degree M polynomial")
-    public static void phase_2_task_1_1(PolygoStat controller, String[] arg) throws FileNotFoundException {
-        File file = new File("phase_2_task_1_1/Observations.txt");
+    public static void phase_2_task_1_1(PolygoStat controller, String[] arg) throws Exception {
+        File file = new File("phase_2_task_1_1/Observation.txt");
         FileInputStream fileInputStream = new FileInputStream(file);
         Scanner scanner = new Scanner(fileInputStream);
         HashMap<Number,Number> chartData = new HashMap<>();
-
+        HashMap<Number,Number> chartDataTrend = new HashMap<>();
         while (scanner.hasNext()){
             chartData.put(scanner.nextDouble(), scanner.nextDouble());
         }
-        controller.drawChart(chartData);
+        double[] x = new double[chartData.size()], y = new double[chartData.size()];
+        int counter = 0;
+        double minKey = 4, maxKey = 0;
+        for (Number key :
+                chartData.keySet()) {
+            if ((double)key > maxKey)
+                maxKey = (double) key;
+            if ((double)key < minKey)
+                minKey = (double) key;
+
+            x[counter] = (double) key;
+            y[counter] = (double) chartData.get(key);
+
+            counter++;
+        }
+        jamlab.Polyfit regression = new jamlab.Polyfit(x, y, 3);
+//        controller.getPrintStream().println(regression.getPolynomialCoefficients());
+        for (double i = minKey; i < maxKey; i+= 0.04) {
+            chartDataTrend.put(i, regression.predict(i));
+        }
+
+        controller.drawChart(chartDataTrend, chartData);
         scanner.close();
     }
 

@@ -122,19 +122,31 @@ public class PolygoStat {
                 }catch (Exception ex){}
     }
 
-    public void drawChart(HashMap<Number, Number> chartData) {
+    public void drawChart(HashMap<Number, Number> chartData, HashMap<Number,Number> chartDataTrend) {
+
         final NumberAxis xAxis = new NumberAxis();
         xAxis.setLabel("");
         final NumberAxis yAxis = new NumberAxis();
         yAxis.setLabel("");
+
         LineChart<Number,Number> lineChart = new LineChart<Number, Number>(xAxis, yAxis);
-        XYChart.Series<Number, Number> series = new XYChart.Series<>();
-        for (Number key :
-                chartData.keySet()) {
-            series.getData().add(new XYChart.Data<Number, Number>(key, chartData.get(key)));
+        if (chartData != null) {
+            XYChart.Series<Number, Number> series = new XYChart.Series<>();
+            for (Number key :
+                    chartData.keySet()) {
+                series.getData().add(new XYChart.Data<Number, Number>(key, chartData.get(key)));
+            }
+            series.setName("Scatter");
+            lineChart.getData().add(series);
         }
-        series.setName("Chart");
-        lineChart.getData().add(series);
+        XYChart.Series<Number, Number> trend = new XYChart.Series<>();
+        for (Number key :
+                chartDataTrend.keySet()) {
+            trend.getData().add(new XYChart.Data<Number, Number>(key, chartDataTrend.get(key)));
+        }
+        trend.setName("Line");
+        lineChart.getData().add(trend);
+
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -146,6 +158,9 @@ public class PolygoStat {
                 AnchorPane.setRightAnchor(lineChart,0.);
             }
         });
+    }
+    public void drawChart(HashMap<Number, Number> chartData) {
+        drawChart(null, chartData);
     }
 
     public void saveChart(String s) {

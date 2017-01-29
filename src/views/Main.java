@@ -27,6 +27,7 @@ public class Main extends Application {
                                            }
                                        });
         primaryStage.setScene(new Scene(root));
+        primaryStage.getScene().getStylesheets().add(Main.class.getResource("chart.css").toExternalForm());
         //primaryStage.setMaximized(true);
         primaryStage.show();
         ((PolygoStat)fxmlLoader.getController()).initializeComponents();

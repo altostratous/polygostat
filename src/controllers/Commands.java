@@ -326,7 +326,7 @@ public class Commands {
 
     @CommandAnnotation(help = "Fits Observations.txt with a degree M polynomial MMSE")
     public static void phase_2_task_1_1(PolygoStat controller, String[] arg) throws Exception {
-        File file = new File("phase_2_task_1_1/"+arg[1]+".txt");
+        File file = new File("phase_2/"+arg[1]+".txt");
         FileInputStream fileInputStream = new FileInputStream(file);
         Scanner scanner = new Scanner(fileInputStream);
         HashMap<Number,Number> chartData = new HashMap<>();
@@ -358,6 +358,7 @@ public class Commands {
         }
 
         controller.drawChart(chartDataTrend, chartData);
+        controller.saveChart("phase_2/"+arg[1]+"_MMSE.png");
         scanner.close();
     }
 
@@ -380,7 +381,7 @@ public class Commands {
     }
     @CommandAnnotation(help = "Fits Observations.txt with a degree M polynomial Method of moments")
     public static void phase_2_task_1_2(PolygoStat controller, String[] arg) throws Exception {
-        File file = new File("phase_2_task_1_1/"+arg[1]+".txt");
+        File file = new File("phase_2/"+arg[1]+".txt");
         FileInputStream fileInputStream = new FileInputStream(file);
         Scanner scanner = new Scanner(fileInputStream);
         HashMap<Number,Number> chartData = new HashMap<>();
@@ -412,6 +413,7 @@ public class Commands {
         }
 
         controller.drawChart(chartDataTrend, chartData);
+        controller.saveChart("phase_2/" +  arg[1] + "_MM.png");
         scanner.close();
     }
 

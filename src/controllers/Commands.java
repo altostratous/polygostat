@@ -129,6 +129,9 @@ public class Commands {
         RandomPointGenerator pointGenerator = null;
         GeometryFactory factory = new GeometryFactory();
         int n = Integer.parseInt(args[2]);
+        int its = 1;
+        if (args.length > 3)
+            its = Integer.parseInt(args[3]);
         switch (args[1]) {
             case "square":
                 pointGenerator = new ConvexPolygonRandomPointGenerator(factory.createPolygon(factory.createLinearRing(
@@ -157,32 +160,51 @@ public class Commands {
         }
         ArrayList<Integer> numberOfGons = new ArrayList<>();
         ArrayList<Double> areas = new ArrayList<>();
-        Coordinate firstPoint = pointGenerator.nextCoordinate();
-        Polygon convex = factory.createPolygon(factory.createLinearRing(
-                new Coordinate[]{
-                        firstPoint,
-                        pointGenerator.nextCoordinate(),
-                        pointGenerator.nextCoordinate(),
-                        firstPoint
-                }
-        ), null);
-        convex = Common.convexHull(convex);
-        numberOfGons.add(convex.getNumPoints() - 1);
-        areas.add(convex.getArea());
-        int lastn = 0;
+//        Coordinate firstPoint = pointGenerator.nextCoordinate();
+//        Polygon convex = factory.createPolygon(factory.createLinearRing(
+//                new Coordinate[]{
+//                        firstPoint,
+//                        pointGenerator.nextCoordinate(),
+//                        pointGenerator.nextCoordinate(),
+//                        firstPoint
+//                }
+//        ), null);
+//        convex = Common.convexHull(convex);
+//        numberOfGons.add(convex.getNumPoints() - 1);
+//        areas.add(convex.getArea());
+//        int lastn = 0;
         controller.getPrintStream().print("Started generation");
-        while (convex.getNumPoints() - 1 < n){
-            Coordinate coordinate = pointGenerator.nextCoordinate();
-            while (convex.contains(factory.createPoint(coordinate)))
-                coordinate = pointGenerator.nextCoordinate();
-            convex = Common.addPointToConvexHull(convex, coordinate);
+        int lastn = 0;
+        for (int i = 0; i < its; i++) {
+            Coordinate firstPoint = pointGenerator.nextCoordinate();
+            Polygon convex = factory.createPolygon(factory.createLinearRing(
+                    new Coordinate[]{
+                            firstPoint,
+                            pointGenerator.nextCoordinate(),
+                            pointGenerator.nextCoordinate(),
+                            firstPoint
+                    }
+            ), null);
+            convex = Common.convexHull(convex);
             numberOfGons.add(convex.getNumPoints() - 1);
             areas.add(convex.getArea());
-            if (lastn < convex.getNumPoints() - 1){
-                lastn = convex.getNumPoints() - 1;
-                controller.getPrintStream().print(", " + lastn);
+            lastn = 0;
+
+            int counter = 0;
+            while (convex.getNumPoints() - 1 < n) {
+                Coordinate coordinate = pointGenerator.nextCoordinate();
+                while (convex.contains(factory.createPoint(coordinate)))
+                    coordinate = pointGenerator.nextCoordinate();
+                convex = Common.addPointToConvexHull(convex, coordinate);
+                numberOfGons.add(convex.getNumPoints() - 1);
+                areas.add(convex.getArea());
+                if (lastn < convex.getNumPoints() - 1) {
+                    lastn = convex.getNumPoints() - 1;
+                    controller.getPrintStream().print(", " + lastn);
 //                Common.drawPolygonToPanel(convex, controller.getMainPane(), Color.GREEN, Color.DEEPSKYBLUE);
 //                controller.savePane("phase_1_task_3/" + lastn + "gon.jpeg");
+                }
+
             }
         }
 
@@ -208,7 +230,7 @@ public class Commands {
                 chartData.put(Math.log((double)i), areaSums[i]);
         }
         controller.drawChart(chartData);
-//        controller.saveChart("phase_1_task_3/chart_"+args[1]+"_"+args[2]+".png");
+        controller.saveChart("phase_1_task_3/chart_"+args[1]+"_"+args[2]+".png");
     }
 
 

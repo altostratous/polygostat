@@ -434,29 +434,59 @@ public class Commands {
         HashMap<Number,Number> chartDataTrend1 = new HashMap<>();
         HashMap<Number,Number> chartDataTrend2 = new HashMap<>();
 
+        ArrayList<Double> allKeys = new ArrayList<>();
+
+        ArrayList<Double> xs = new ArrayList<>();
+        ArrayList<Double> ys = new ArrayList<>();
+        scanner.nextDouble();
+        scanner.nextDouble();
+        double e = 0;
         while (scanner.hasNext()){
             double x = scanner.nextDouble();
             double y = scanner.nextDouble();
-            if (y != 0)
-                chartDataTemp.put(x, y);
+            xs.add(x);
+            ys.add(y);
+            if (y > e)
+                e = y;
+        }
+        e /= 10;
+        for (int i = xs.size() - 1; i > 0; i--) {
+            if (Math.abs(ys.get(i - 1)) <= e && Math.abs( ys.get(i)) <= e){
+                ys.remove(i);
+                xs.remove(i);
+            }else
+            {
+                break;
+            }
+        }
+        int i = 0;
+        for (i = 0; i < xs.size() - 1; i++) {
+            if (Math.abs(ys.get(i + 1)) > e || Math.abs( ys.get(i)) > e){
+                break;
+            }
         }
 
-        ArrayList<Integer> keyList = new ArrayList<>();
-        Random random = new Random();
-        for (int i = 0; i < 5; i++) {
-            keyList.add(Common.fixInSize((int)(chartDataTemp.size() - Common.randomBiLinear(random, chartDataTemp.size())), chartDataTemp.size()));
+        for(; i  < xs.size(); i++){
+            chartDataTemp.put(xs.get(i), ys.get(i));
+            allKeys.add(xs.get(i));
         }
 
-        int counter = 0;
+        ArrayList<Double> keyList = new ArrayList<>();
+
+        int istep = allKeys.size() / 5;
+        istep = Math.max(istep, 1);
+        for (i = 0; i < allKeys.size(); i+=istep) {
+            keyList.add(allKeys.get(i));
+        }
+
         for (Number key :
                 chartDataTemp.keySet()) {
-            if (keyList.contains(counter))
+            if (keyList.contains(key))
                 chartData.put(key, chartDataTemp.get(key));
-            counter++;
         }
 
         double[] x = new double[chartData.size()], y = new double[chartData.size()];
-        counter = 0;
+        int counter = 0;
         double minKey = 4, maxKey = 0;
         for (Number key :
                 chartData.keySet()) {
@@ -470,24 +500,26 @@ public class Commands {
 
             counter++;
         }
-        MethodOfMomentsEstimator regression = new MethodOfMomentsEstimator(x, y, 4, minKey, maxKey);
-        PolynomialRegression mmseRegression = new PolynomialRegression(x,y,4);
+        MethodOfMomentsEstimator regression = new MethodOfMomentsEstimator(x, y,3, minKey, maxKey);
+        PolynomialRegression mmseRegression = new PolynomialRegression(x,y,3);
 
         controller.getPrintStream().println(mmseRegression);
         double step = (maxKey - minKey) / 100;
-        for (double i = minKey; i < maxKey; i+= step) {
-            chartDataTrend1.put(i, regression.predict(i));
-            chartDataTrend2.put(i, mmseRegression.predict(i));
+        for (double j = minKey; j < maxKey; j+= step) {
+            chartDataTrend1.put(j, regression.predict(j));
+            chartDataTrend2.put(j, mmseRegression.predict(j));
         }
         HashMap<String, HashMap<Number, Number>> data = new HashMap<>();
         data.put("1. Main", chartDataTemp);
         data.put("2. Scatter", chartData);
         data.put("3. MMSE", chartDataTrend2);
         controller.drawCharts(data);
+        Thread.sleep(500);
         controller.saveChart("phase_3/"+file.getName()+".MMSE.png");
         data.remove("3. MMSE");
         data.put("3. MLM", chartDataTrend1);
         controller.drawCharts(data);
+        Thread.sleep(500);
         controller.saveChart("phase_3/"+file.getName()+".MLM.png");
         data.remove("3. MLM");
         scanner.close();

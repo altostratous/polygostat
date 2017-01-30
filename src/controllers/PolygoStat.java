@@ -150,6 +150,7 @@ public void handle(){
             lineChart.getData().add(series);
         }
 
+        lineChart.setAnimated(false);
         Platform.runLater(new Runnable() {
             @Override
             public void run() {

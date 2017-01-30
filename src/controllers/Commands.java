@@ -37,7 +37,7 @@ public class Commands {
     }
 
     @CommandAnnotation(help = "params square/circle/triangle, n")
-    public static void phase_1_task_1(PolygoStat controller, String[] args){
+    public static void phase_1_task_1_1(PolygoStat controller, String[] args){
         RandomNHullGenerator randomNHullGenerator = null;
         int n = Integer.parseInt(args[2]);
         switch (args[1]){
@@ -54,9 +54,32 @@ public class Commands {
         TwoPolygonsSheet sheet = new TwoPolygonsSheet(randomNHullGenerator);
         sheet.next();
         sheet.drawToPanel(controller.getMainPane());
+        controller.savePane("phase_1_task_1/"+ args[1] +n+"Hull.png");
     }
+
+    @CommandAnnotation(help = "params square/circle/triangle, n")
+    public static void phase_1_task_1_2(PolygoStat controller, String[] args) throws InterruptedException {
+        RandomNHullGenerator randomNHullGenerator = null;
+        int n = Integer.parseInt(args[2]);
+        switch (args[1]){
+            case "square":
+                randomNHullGenerator = new UnitSquareRandomNGonGenerator(n);
+                break;
+            case "circle":
+                randomNHullGenerator = new UnitCircleRandomNGonGenerator(n);
+                break;
+            case "triangle":
+                randomNHullGenerator = new UnitTriangleRandomNGonGenerator(n);
+                break;
+        }
+        TwoPolygonsSheet sheet = new TwoPolygonsSheet(randomNHullGenerator);
+        sheet.next();
+        sheet.drawToPanel(controller.getMainPane());
+        controller.savePane("phase_1_task_1/"+ args[1] +n+"Gon.png");
+    }
+
     @CommandAnnotation(help = "param square/circle/triangle, n | Plots distribution for n-Hulls")
-    public static void phase_1_task_2(PolygoStat controller, String[] args){
+    public static void phase_1_task_2(PolygoStat controller, String[] args) throws FileNotFoundException {
         RandomNHullGenerator randomNHullGenerator = null;
         int n = Integer.parseInt(args[2]);
         switch (args[1]){
@@ -77,7 +100,7 @@ public class Commands {
         for (int i = 0; i < smoothness; i += 1) {
             distro[i] = 0;
         }
-        int sampleSize = 5000;
+        int sampleSize = (int)(1000 / Math.log10(n));
         for (int i = 0; i< sampleSize; i++){
             sheet.next();
             controller.getPrintStream().print(i + " ");
@@ -87,12 +110,17 @@ public class Commands {
         }
         HashMap<Number,Number> chatData = new HashMap<>();
         controller.getPrintStream().println();
+        FileOutputStream fileOutputStream = new FileOutputStream("phase_1_task_2/" + args[1] + "_" + args[2] + ".txt");
+        PrintStream fileOutputPrintStream = new PrintStream(fileOutputStream);
+        fileOutputPrintStream.println("0.0 4.0");
         for (int i = 0; i < smoothness; i++) {
             chatData.put(i * (4.0 / smoothness), distro[i]);
             controller.getPrintStream().println(i * (4.0 / smoothness) + " " + distro[i]);
+            fileOutputPrintStream.println(i * (4.0 / smoothness) + " " + distro[i]);
         }
+        fileOutputPrintStream.close();
         controller.drawChart(chatData);
-//        controller.saveChart("phase_1_task_3/chart_"+args[1]+"_"+args[2]+".png");
+        controller.saveChart("phase_1_task_2/" + args[1] + "_" + args[2] + ".png");
     }
 
     @CommandAnnotation(help = "param square/circle/triangle, n | Performs NGon generation from N = 5 to n. You can" +

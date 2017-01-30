@@ -28,8 +28,10 @@ public class PolygoStat {
     @FXML
     private AnchorPane lineChartContainer;
     @FXML
-    private Pane mainPane;
-
+    private AnchorPane mainPane;
+public void handle(){
+    savePane("phase_1_task_1/sdfklj.png");
+}
     public PolygoStat(){
     }
 
@@ -147,6 +149,8 @@ public class PolygoStat {
                 AnchorPane.setBottomAnchor(lineChart,0.);
                 AnchorPane.setLeftAnchor(lineChart,0.);
                 AnchorPane.setRightAnchor(lineChart,0.);
+                lineChart.applyCss();
+                lineChart.layout();
             }
         });
     }
@@ -174,7 +178,7 @@ public class PolygoStat {
         }
         trend.setName("Line");
         lineChart.getData().add(trend);
-
+        lineChart.setAnimated(false);
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -184,6 +188,8 @@ public class PolygoStat {
                 AnchorPane.setBottomAnchor(lineChart,0.);
                 AnchorPane.setLeftAnchor(lineChart,0.);
                 AnchorPane.setRightAnchor(lineChart,0.);
+                lineChart.applyCss();
+                lineChart.layout();
             }
         });
     }
@@ -201,6 +207,11 @@ public class PolygoStat {
     }
 
     public void savePane(String s) {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Platform.runLater(new Runnable() {
             @Override
             public void run() {

@@ -9,7 +9,7 @@ import javafx.geometry.Rectangle2D;
 /**
  * Created by HP PC on 1/18/2017.
  */
-public abstract class RandomNHullGenerator {
+public class RandomNHullGenerator {
     protected RandomPointGenerator pointGenerator;
     private int n;
     protected GeometryFactory factory;
@@ -33,5 +33,5 @@ public abstract class RandomNHullGenerator {
         return Common.convexHull(polygon);
     }
 
-    public abstract Rectangle2D getBounds();
+    // public abstract Rectangle2D getBounds();
 }

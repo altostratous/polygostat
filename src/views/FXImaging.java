@@ -34,8 +34,9 @@ import javax.swing.Timer;
 public class FXImaging{
     public static void saveImage(Node node, String fileName) {
         SnapshotParameters parameters = new SnapshotParameters();
-        Bounds bounds = node.getLayoutBounds();
-        parameters.setViewport(new Rectangle2D(bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight()));
+//        node.applyCss();
+//        Bounds bounds = node.getBoundsInParent();
+//        parameters.setViewport(new Rectangle2D(bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight()));
         WritableImage image = node.snapshot(parameters, null);
 
         // TODO: probably use a file chooser here

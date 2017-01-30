@@ -20,8 +20,4 @@ public class UnitSquareRandomNHullGenerator extends RandomNHullGenerator {
         ), null));
     }
 
-    @Override
-    public Rectangle2D getBounds() {
-        return new Rectangle2D(0, 0, 1, 1);
-    }
 }

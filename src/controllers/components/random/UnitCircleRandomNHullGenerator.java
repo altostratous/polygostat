@@ -12,8 +12,4 @@ public class UnitCircleRandomNHullGenerator extends RandomNHullGenerator {
         this.pointGenerator = new CircleRandomPointGenerator(1, new Coordinate(0,0));
     }
 
-    @Override
-    public Rectangle2D getBounds() {
-        return new Rectangle2D(0, 0, 1, 1);
-    }
 }

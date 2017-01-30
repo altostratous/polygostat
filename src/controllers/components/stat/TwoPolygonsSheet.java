@@ -4,6 +4,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
 import controllers.components.geomentry.Common;
 import controllers.components.random.RandomNHullGenerator;
+import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
@@ -25,10 +26,15 @@ public class TwoPolygonsSheet {
         intersection = factory.createPolygon(factory.createLinearRing(firstConvexHull.intersection(secondConvexHull).getCoordinates()), null);
     }
     public void drawToPanel(Pane pane){
-        pane.getChildren().clear();
-        Common.drawPolygonToPanel(firstPolygon, pane, Color.DEEPSKYBLUE, Color.TRANSPARENT);
-        Common.drawPolygonToPanel(secondPolygon, pane, Color.INDIANRED, Color.TRANSPARENT);
-        Common.drawPolygonToPanel(intersection, pane, Color.DARKGREEN, Color.color(0.2, 0.8, 0.2, 0.3));
+        Platform.runLater(new Runnable() {
+                              @Override
+                              public void run() {
+                                  pane.getChildren().clear();
+                                  Common.drawPolygonToPanel(firstPolygon, pane, Color.DEEPSKYBLUE, Color.TRANSPARENT);
+                                  Common.drawPolygonToPanel(secondPolygon, pane, Color.INDIANRED, Color.TRANSPARENT);
+                                  Common.drawPolygonToPanel(intersection, pane, Color.DARKGREEN, Color.color(0.2, 0.8, 0.2, 0.3));
+                              }
+                          });
     }
 
     public double getOverLappingArea() {

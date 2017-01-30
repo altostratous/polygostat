@@ -156,6 +156,9 @@ public class Commands {
 //                controller.savePane("phase_1_task_3/" + lastn + "gon.jpeg");
             }
         }
+
+
+
         controller.getPrintStream().println("\nGeneration finished for one iteration.");
         double[] areaSums =new double[lastn + 1];
         int[] counts = new int[lastn + 1];

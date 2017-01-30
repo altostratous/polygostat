@@ -94,6 +94,7 @@ public class Commands {
         controller.drawChart(chatData);
 //        controller.saveChart("phase_1_task_3/chart_"+args[1]+"_"+args[2]+".png");
     }
+
     @CommandAnnotation(help = "param square/circle/triangle, n | Performs NGon generation from N = 5 to n. You can" +
             "view distributions and generated polygons as output")
     public static void phase_1_task_3(PolygoStat controller, String[] args){
@@ -181,6 +182,97 @@ public class Commands {
         controller.drawChart(chartData);
 //        controller.saveChart("phase_1_task_3/chart_"+args[1]+"_"+args[2]+".png");
     }
+
+
+    @CommandAnnotation(help = "param square/circle/triangle, n | Performs NGon generation from N = 5 to n. You can" +
+            "view distributions and generated polygons as output")
+    public static void phase_1_task_4(PolygoStat controller, String[] args){
+        RandomPointGenerator pointGenerator = null;
+        GeometryFactory factory = new GeometryFactory();
+        int n = Integer.parseInt(args[2]);
+        switch (args[1]) {
+            case "square":
+                pointGenerator = new ConvexPolygonRandomPointGenerator(factory.createPolygon(factory.createLinearRing(
+                        new Coordinate[]{
+                                new Coordinate(0, 0),
+                                new Coordinate(0, 1),
+                                new Coordinate(1, 1),
+                                new Coordinate(1, 0),
+                                new Coordinate(0, 0)
+                        }
+                ), null));
+                break;
+            case "circle":
+                pointGenerator = new CircleRandomPointGenerator(1, new Coordinate(0, 0));
+                break;
+            case "triangle":
+                pointGenerator = new ConvexPolygonRandomPointGenerator(factory.createPolygon(factory.createLinearRing(
+                        new Coordinate[]{
+                                new Coordinate(-0.5, 0),
+                                new Coordinate(+0.5, 0),
+                                new Coordinate(0, Math.signum(0.75)),
+                                new Coordinate(-0.5, 0)
+                        }
+                ), null));
+                break;
+        }
+        ArrayList<Integer> numberOfGons = new ArrayList<>();
+        ArrayList<Double> areas = new ArrayList<>();
+        int lastn = 0;
+        controller.getPrintStream().print("Started generation");
+        for (int i = 0; i < 1000; i++) {
+            Coordinate firstPoint = pointGenerator.nextCoordinate();
+            Polygon convex = factory.createPolygon(factory.createLinearRing(
+                    new Coordinate[]{
+                            firstPoint,
+                            pointGenerator.nextCoordinate(),
+                            pointGenerator.nextCoordinate(),
+                            firstPoint
+                    }
+            ), null);
+
+            convex = Common.convexHull(convex);
+
+            numberOfGons.add(convex.getNumPoints() - 1);
+            areas.add(convex.getArea());
+            while (convex.getNumPoints() - 1 < n) {
+                Coordinate coordinate = pointGenerator.nextCoordinate();
+                while (convex.contains(factory.createPoint(coordinate)))
+                    coordinate = pointGenerator.nextCoordinate();
+                convex = Common.addPointToConvexHull(convex, coordinate);
+                if (lastn < convex.getNumPoints() - 1) {
+                    lastn = convex.getNumPoints() - 1;
+                    controller.getPrintStream().print(", " + lastn);
+//                Common.drawPolygonToPanel(convex, controller.getMainPane(), Color.GREEN, Color.DEEPSKYBLUE);
+//                controller.savePane("phase_1_task_3/" + lastn + "gon.jpeg");
+                }
+                if (lastn == n) {
+                    numberOfGons.add(convex.getNumPoints() - 1);
+                    areas.add(convex.getArea());
+                }
+            }
+        }
+
+
+        int smoothness = 80;
+        double[] distro = new double[smoothness];
+        for (int i = 0; i < smoothness; i += 1) {
+            distro[i] = 0;
+        }
+        for (int i = 0; i < areas.size(); i++){
+            int key = (int)Math.floor(areas.get(i) / 4 * smoothness);
+            distro[key] += 1.0/areas.size();
+        }
+
+        controller.getPrintStream().println();
+        for (int i = 0; i < smoothness; i++) {
+            controller.getPrintStream().println(i * (4.0 / smoothness) + " " + distro[i]);
+        }
+
+        controller.getPrintStream().println("\nGeneration finished for one iteration.");
+
+    }
+
 
     @CommandAnnotation(help = "Fits Observations.txt with a degree M polynomial MMSE")
     public static void phase_2_task_1_1(PolygoStat controller, String[] arg) throws Exception {

@@ -6,6 +6,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import controllers.components.geomentry.Common;
 import controllers.components.random.*;
 import controllers.components.stat.MethodOfMomentsEstimator;
+import controllers.components.stat.PolynomialRegression;
 import controllers.components.stat.TwoPolygonsSheet;
 import views.CommandAnnotation;
 
@@ -13,6 +14,7 @@ import java.io.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -75,16 +77,19 @@ public class Commands {
         for (int i = 0; i < smoothness; i += 1) {
             distro[i] = 0;
         }
-        int sampleSize = 50000;
+        int sampleSize = 5000;
         for (int i = 0; i< sampleSize; i++){
             sheet.next();
+            controller.getPrintStream().print(i + " ");
             double area = sheet.getOverLappingArea();
             int key = (int)Math.floor(area / 4 * smoothness);
             distro[key] += 1.0/sampleSize;
         }
         HashMap<Number,Number> chatData = new HashMap<>();
+        controller.getPrintStream().println();
         for (int i = 0; i < smoothness; i++) {
-            chatData.put(i * 0.04, distro[i]);
+            chatData.put(i * (4.0 / smoothness), distro[i]);
+            controller.getPrintStream().println(i * (4.0 / smoothness) + " " + distro[i]);
         }
         controller.drawChart(chatData);
 //        controller.saveChart("phase_1_task_3/chart_"+args[1]+"_"+args[2]+".png");
@@ -176,7 +181,7 @@ public class Commands {
 
     @CommandAnnotation(help = "Fits Observations.txt with a degree M polynomial MMSE")
     public static void phase_2_task_1_1(PolygoStat controller, String[] arg) throws Exception {
-        File file = new File("phase_2_task_1_1/Observation.txt");
+        File file = new File("phase_2_task_1_1/"+arg[1]+".txt");
         FileInputStream fileInputStream = new FileInputStream(file);
         Scanner scanner = new Scanner(fileInputStream);
         HashMap<Number,Number> chartData = new HashMap<>();
@@ -201,7 +206,7 @@ public class Commands {
 
             counter++;
         }
-        jamlab.Polyfit regression = new jamlab.Polyfit(x, y, 4);
+         PolynomialRegression regression = new PolynomialRegression(x, y, 3);
 //        controller.getPrintStream().println(regression.getPolynomialCoefficients());
         for (double i = minKey; i < maxKey; i+= 0.04) {
             chartDataTrend.put(i, regression.predict(i));
@@ -219,6 +224,8 @@ public class Commands {
         FileOutputStream uniformFileInputStream = new FileOutputStream(uniformFile);
         PrintStream exponentialPrintStream = new PrintStream(exponentialFileInputStream);
         PrintStream uniformPrintStream = new PrintStream(uniformFileInputStream);
+        exponentialPrintStream.println("0.0 1.0");
+        uniformPrintStream.println("0.0 1.0");
         for (double i = 0; i < 1; i+= 0.05) {
             uniformPrintStream.println(i + " " + 1.0);
             exponentialPrintStream.println(i + " " + Math.exp(-i));
@@ -228,7 +235,7 @@ public class Commands {
     }
     @CommandAnnotation(help = "Fits Observations.txt with a degree M polynomial Method of moments")
     public static void phase_2_task_1_2(PolygoStat controller, String[] arg) throws Exception {
-        File file = new File("phase_2_task_1_1/Observation.txt");
+        File file = new File("phase_2_task_1_1/"+arg[1]+".txt");
         FileInputStream fileInputStream = new FileInputStream(file);
         Scanner scanner = new Scanner(fileInputStream);
         HashMap<Number,Number> chartData = new HashMap<>();
@@ -253,7 +260,7 @@ public class Commands {
 
             counter++;
         }
-        MethodOfMomentsEstimator regression = new MethodOfMomentsEstimator(x, y, 3, minX, maxX);
+        MethodOfMomentsEstimator regression = new MethodOfMomentsEstimator(x, y, 10, minX, maxX);
 //        controller.getPrintStream().println(regression.getPolynomialCoefficients());
         for (double i = minKey; i < maxKey; i+= 0.04) {
             chartDataTrend.put(i, regression.predict(i));
@@ -261,6 +268,72 @@ public class Commands {
 
         controller.drawChart(chartDataTrend, chartData);
         scanner.close();
+    }
+
+    @CommandAnnotation(help = "Fits Observations.txt with a degree M polynomial Method of moments")
+    public static void phase_3_task_1(PolygoStat controller, String[] arg) throws Exception {
+        File file = new File("phase_3_task_1/50CircleHulls.txt");
+        FileInputStream fileInputStream = new FileInputStream(file);
+        Scanner scanner = new Scanner(fileInputStream);
+        HashMap<Number,Number> chartData = new HashMap<>();
+        HashMap<Number,Number> chartDataTemp = new HashMap<>();
+        HashMap<Number,Number> chartDataTrend1 = new HashMap<>();
+        HashMap<Number,Number> chartDataTrend2 = new HashMap<>();
+
+        while (scanner.hasNext()){
+            chartDataTemp.put(scanner.nextDouble(), scanner.nextDouble());
+        }
+
+        ArrayList<Integer> keyList = new ArrayList<>();
+        Random random = new Random();
+        for (int i = 0; i < 5; i++) {
+            keyList.add(Common.fixInSize((int)(chartDataTemp.size() - Common.randomBiLinear(random, chartDataTemp.size())), chartDataTemp.size()));
+        }
+
+        int counter = 0;
+        for (Number key :
+                chartDataTemp.keySet()) {
+            if (keyList.contains(counter))
+                chartData.put(key, chartDataTemp.get(key));
+            counter++;
+        }
+
+        double[] x = new double[chartData.size()], y = new double[chartData.size()];
+        counter = 0;
+        double minKey = 4, maxKey = 0;
+        for (Number key :
+                chartData.keySet()) {
+            if ((double)key > maxKey)
+                maxKey = (double) key;
+            if ((double)key < minKey)
+                minKey = (double) key;
+
+            x[counter] = (double) key;
+            y[counter] = (double) chartData.get(key);
+
+            counter++;
+        }
+        MethodOfMomentsEstimator regression = new MethodOfMomentsEstimator(x, y, 10, minKey, maxKey);
+        PolynomialRegression mmseRegression = new PolynomialRegression(x,y,3);
+
+        controller.getPrintStream().println(mmseRegression);
+        double step = (maxKey - minKey) / 100;
+        for (double i = minKey; i < maxKey; i+= step) {
+            chartDataTrend1.put(i, regression.predict(i));
+            chartDataTrend2.put(i, mmseRegression.predict(i));
+        }
+        HashMap<String, HashMap<Number, Number>> data = new HashMap<>();
+        data.put("Scatter", chartData);
+        data.put("MMSE", chartDataTrend2);
+        data.put("MLM", chartDataTrend1);
+        data.put("Main", chartDataTemp);
+        controller.drawCharts(data);
+        scanner.close();
+    }
+
+    @CommandAnnotation(help = "Cancels operation.")
+    public static void phase_3(PolygoStat controller, String[] args){
+        controller.getPrintStream().println("\nPhase 3 can be done only using prior phase commands.");
     }
 
     @CommandAnnotation(help = "Cancels operation.")

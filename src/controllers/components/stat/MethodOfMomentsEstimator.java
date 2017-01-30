@@ -64,14 +64,23 @@ public class MethodOfMomentsEstimator {
     double getSampleNthMoment(int n){
         double result = 0;
         for (int i = 0; i < y.length; i++) {
-            double dx;
+            double dx1;
+            double dx2;
+            if (i == y.length - 1){
+                dx2 = 0;
+            } else
+            {
+                dx2 = x[i + 1] - x[i];
+
+            }
             if (i == 0)
-                dx = x[i + 1] - x[i];
+                dx1 = 0;
             else
-                dx = x[i] - x[i - 1];
-            result += Math.pow(x[i], n) * y[i] * (dx);
+                dx1 = x[i] - x[i - 1];
+            result += Math.pow(x[i], n) * y[i] * (dx1);
+            result += Math.pow(x[i], n) * y[i] * (dx2);
         }
-        return result;
+        return result / 2;
     }
 
     public double getMinX() {

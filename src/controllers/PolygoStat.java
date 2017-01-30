@@ -121,7 +121,35 @@ public class PolygoStat {
                     worker.stop();
                 }catch (Exception ex){}
     }
+    public void drawCharts(HashMap<String,HashMap<Number,Number>> chartDatas){
+        final NumberAxis xAxis = new NumberAxis();
+        xAxis.setLabel("");
+        final NumberAxis yAxis = new NumberAxis();
+        yAxis.setLabel("");
+        LineChart<Number,Number> lineChart = new LineChart<Number, Number>(xAxis, yAxis);
+        for (String label :
+                chartDatas.keySet()) {
+            HashMap<Number, Number> chartData = chartDatas.get(label);XYChart.Series<Number, Number> series = new XYChart.Series<>();
+            for (Number key :
+                    chartData.keySet()) {
+                series.getData().add(new XYChart.Data<Number, Number>(key, chartData.get(key)));
+            }
+            series.setName(label);
+            lineChart.getData().add(series);
+        }
 
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                lineChartContainer.getChildren().clear();
+                lineChartContainer.getChildren().add(lineChart);
+                AnchorPane.setTopAnchor(lineChart,0.);
+                AnchorPane.setBottomAnchor(lineChart,0.);
+                AnchorPane.setLeftAnchor(lineChart,0.);
+                AnchorPane.setRightAnchor(lineChart,0.);
+            }
+        });
+    }
     public void drawChart(HashMap<Number, Number> chartData, HashMap<Number,Number> chartDataTrend) {
 
         final NumberAxis xAxis = new NumberAxis();

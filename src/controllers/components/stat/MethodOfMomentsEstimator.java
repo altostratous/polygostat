@@ -73,6 +73,7 @@ public class MethodOfMomentsEstimator {
                 dx2 = x[i + 1] - x[i];
 
             }
+//            dx2 = 0;
             if (i == 0)
                 dx1 = 0;
             else

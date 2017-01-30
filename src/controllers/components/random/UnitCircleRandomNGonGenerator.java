@@ -5,7 +5,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 /**
  * Created by HP PC on 1/30/2017.
  */
-public class UnitCircleRandomNGonGenerator extends RandomNHullGenerator {
+public class UnitCircleRandomNGonGenerator extends RandomNGonGenerator {
     public UnitCircleRandomNGonGenerator(int n) {
         super(n);
 

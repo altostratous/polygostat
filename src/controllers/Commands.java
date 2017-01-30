@@ -383,7 +383,7 @@ public class Commands {
 
             counter++;
         }
-        MethodOfMomentsEstimator regression = new MethodOfMomentsEstimator(x, y, 10, minX, maxX);
+        MethodOfMomentsEstimator regression = new MethodOfMomentsEstimator(x, y, 4, minX, maxX);
 //        controller.getPrintStream().println(regression.getPolynomialCoefficients());
         for (double i = minKey; i < maxKey; i+= 0.04) {
             chartDataTrend.put(i, regression.predict(i));

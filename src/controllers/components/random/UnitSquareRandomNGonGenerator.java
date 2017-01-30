@@ -6,7 +6,7 @@ import javafx.geometry.Rectangle2D;
 /**
  * Created by HP PC on 1/30/2017.
  */
-public class UnitSquareRandomNGonGenerator extends RandomNHullGenerator {
+public class UnitSquareRandomNGonGenerator extends RandomNGonGenerator {
     public UnitSquareRandomNGonGenerator(int n) {
         super(n);
 

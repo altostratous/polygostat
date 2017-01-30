@@ -16,8 +16,10 @@ import views.FXImaging;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class PolygoStat {
@@ -129,8 +131,16 @@ public void handle(){
         final NumberAxis yAxis = new NumberAxis();
         yAxis.setLabel("");
         LineChart<Number,Number> lineChart = new LineChart<Number, Number>(xAxis, yAxis);
-        for (String label :
+        String[] labels = new String[chartDatas.size()];
+        int counter = 0;
+        for (String key :
                 chartDatas.keySet()) {
+            labels[counter] = key;
+            counter++;
+        }
+        Arrays.sort(labels);
+        for (String label :
+                labels) {
             HashMap<Number, Number> chartData = chartDatas.get(label);XYChart.Series<Number, Number> series = new XYChart.Series<>();
             for (Number key :
                     chartData.keySet()) {

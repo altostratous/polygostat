@@ -10,7 +10,9 @@ import controllers.components.stat.PolynomialRegression;
 import controllers.components.stat.TwoPolygonsSheet;
 import views.CommandAnnotation;
 
+import javax.xml.transform.Transformer;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,7 +127,7 @@ public class Commands {
 
     @CommandAnnotation(help = "param square/circle/triangle, n | Performs NGon generation from N = 5 to n. You can" +
             "view distributions and generated polygons as output")
-    public static void phase_1_task_3(PolygoStat controller, String[] args){
+    public static void phase_1_task_3(PolygoStat controller, String[] args) throws FileNotFoundException {
         RandomPointGenerator pointGenerator = null;
         GeometryFactory factory = new GeometryFactory();
         int n = Integer.parseInt(args[2]);
@@ -174,6 +176,9 @@ public class Commands {
 //        areas.add(convex.getArea());
 //        int lastn = 0;
         controller.getPrintStream().print("Started generation");
+        FileOutputStream fileOutputStream = new FileOutputStream("phase_1_task_3/" + args[1] + "_" + args[2] + ".txt");
+        PrintStream fileOutputPrintStream = new PrintStream(fileOutputStream);
+        fileOutputPrintStream.println("0.0 " + Math.log(n));
         int lastn = 0;
         for (int i = 0; i < its; i++) {
             Coordinate firstPoint = pointGenerator.nextCoordinate();
@@ -226,8 +231,10 @@ public class Commands {
         HashMap<Number,Number> chartData = new HashMap<>();
         for (int i = 0; i < lastn +1; i++) {
             controller.getPrintStream().println(i+ " " + areaSums[i]);
-            if (counts[i] > 0)
-                chartData.put(Math.log((double)i), areaSums[i]);
+            if (counts[i] > 0) {
+                chartData.put(Math.log((double) i), areaSums[i]);
+                fileOutputPrintStream.println( Math.log((double) i) + " " + areaSums[i]);
+            }
         }
         controller.drawChart(chartData);
         controller.saveChart("phase_1_task_3/chart_"+args[1]+"_"+args[2]+".png");
@@ -418,8 +425,8 @@ public class Commands {
     }
 
     @CommandAnnotation(help = "Fits Observations.txt with a degree M polynomial Method of moments")
-    public static void phase_3_task_1(PolygoStat controller, String[] arg) throws Exception {
-        File file = new File("phase_3_task_1/50CircleHulls.txt");
+    public static void phase_3_inner(PolygoStat controller, String[] arg) throws Exception {
+        File file = new File(arg[1]);
         FileInputStream fileInputStream = new FileInputStream(file);
         Scanner scanner = new Scanner(fileInputStream);
         HashMap<Number,Number> chartData = new HashMap<>();
@@ -428,7 +435,10 @@ public class Commands {
         HashMap<Number,Number> chartDataTrend2 = new HashMap<>();
 
         while (scanner.hasNext()){
-            chartDataTemp.put(scanner.nextDouble(), scanner.nextDouble());
+            double x = scanner.nextDouble();
+            double y = scanner.nextDouble();
+            if (y != 0)
+                chartDataTemp.put(x, y);
         }
 
         ArrayList<Integer> keyList = new ArrayList<>();
@@ -460,8 +470,8 @@ public class Commands {
 
             counter++;
         }
-        MethodOfMomentsEstimator regression = new MethodOfMomentsEstimator(x, y, 10, minKey, maxKey);
-        PolynomialRegression mmseRegression = new PolynomialRegression(x,y,3);
+        MethodOfMomentsEstimator regression = new MethodOfMomentsEstimator(x, y, 4, minKey, maxKey);
+        PolynomialRegression mmseRegression = new PolynomialRegression(x,y,4);
 
         controller.getPrintStream().println(mmseRegression);
         double step = (maxKey - minKey) / 100;
@@ -470,17 +480,49 @@ public class Commands {
             chartDataTrend2.put(i, mmseRegression.predict(i));
         }
         HashMap<String, HashMap<Number, Number>> data = new HashMap<>();
-        data.put("Scatter", chartData);
-        data.put("MMSE", chartDataTrend2);
-        data.put("MLM", chartDataTrend1);
-        data.put("Main", chartDataTemp);
+        data.put("1. Main", chartDataTemp);
+        data.put("2. Scatter", chartData);
+        data.put("3. MMSE", chartDataTrend2);
         controller.drawCharts(data);
+        controller.saveChart("phase_3/"+file.getName()+".MMSE.png");
+        data.remove("3. MMSE");
+        data.put("3. MLM", chartDataTrend1);
+        controller.drawCharts(data);
+        controller.saveChart("phase_3/"+file.getName()+".MLM.png");
+        data.remove("3. MLM");
         scanner.close();
     }
 
-    @CommandAnnotation(help = "Cancels operation.")
-    public static void phase_3(PolygoStat controller, String[] args){
-        controller.getPrintStream().println("\nPhase 3 can be done only using prior phase commands.");
+    @CommandAnnotation(help = "Estimates all data.")
+    public static void phase_3(PolygoStat controller, String[] args) throws Exception {
+        File task_2 = new File("phase_1_task_2");
+        File task_3  = new File("phase_1_task_3");
+        File[] files_2 = task_2.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                if (name.endsWith(".txt"))
+                    return true;
+                else
+                    return false;
+            }
+        });
+        File[] files_3 = task_3.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                if (name.endsWith(".txt"))
+                    return true;
+                else
+                    return false;
+            }
+        });
+        File[] files = new File[files_2.length + files_3.length];
+        System.arraycopy(files_2, 0, files, 0, files_2.length);
+        System.arraycopy(files_3, 0, files, files_2.length, files_3.length);
+        for (File file :
+                files) {
+            phase_3_inner(controller, new String[]{"phase_3_inner", file.getParentFile().getName() + "/" + file.getName()});
+            Thread.sleep(500);
+        }
     }
 
     @CommandAnnotation(help = "Cancels operation.")

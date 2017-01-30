@@ -14,3 +14,20 @@
 .default-color0.chart-legend-item-symbol{
     -fx-background-color: red;
  }
+
+ .default-color3.chart-series-line { -fx-stroke: yellow; }
+ .default-color2.chart-series-line { -fx-stroke: blue; }
+
+ .default-color3.chart-line-symbol {
+     -fx-background-color: transparent, transparent;
+ }
+ .default-color2.chart-line-symbol {
+     -fx-background-color: transparent, transparent;
+ }
+
+ .default-color3.chart-legend-item-symbol{
+     -fx-background-color: yellow;
+  }
+ .default-color2.chart-legend-item-symbol{
+     -fx-background-color: blue;
+  }

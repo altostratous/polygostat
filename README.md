@@ -10,3 +10,16 @@ Good random object generators; such as CircleRandomPoint generator which generat
 
 ## Installation
 It requires JavaFX, jts-1.10 and Jama-1.0.3 libraries. It is written on Java 1.8.
+
+## Usage
+You will find many project specific things in this repository such as phase_1_task_1 etc. But you can find reusable things in [components](https://github.com/altostratous/polygostat/blob/master/src/controllers/components).
+Of course you can use the GUI as simple as the fallowing:
+
+In src/controllers/Commands just add a function like this to add a command to GUI:
+    
+    @CommandAnnotation(help = "[Help for the command goes here.]")
+    public static void cancel(PolygoStat controller, String[] args){
+        // printing sth in the GUI console 
+        controller.getPrintStream().println("\nCancelled operation.");
+        // for showing charts and polygons or save them as image please see how other commands are implemented
+    }

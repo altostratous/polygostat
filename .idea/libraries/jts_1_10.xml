@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="thorwin.math-1.5.0">
+  <library name="jts-1.10">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../Research/thorwin.math-1.5.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Research/jts-1.10.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
